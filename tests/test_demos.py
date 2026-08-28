@@ -4,12 +4,11 @@ import shutil
 import subprocess
 import sys
 
-
-ROOT = pathlib.Path(__file__).absolute().parent.parent
-TESTDATA = ROOT / "tests" / "testdata"
-
 import packaging
 import pymsbuild
+
+
+ROOT = pathlib.Path(__file__).absolute().parent.parent
 
 
 PYTHONPATH = os.pathsep.join(
@@ -31,8 +30,8 @@ def run(*cmd, cwd=None, env=None):
     subprocess.check_call(cmd, cwd=cwd, env=env)
 
 
-def test_build_package1(tmp_path):
-    root = shutil.copytree(TESTDATA / "package1", tmp_path / "package1")
+def test_build_package1(testdata, tmp_path):
+    root = shutil.copytree(testdata / "package1", tmp_path / "package1")
     run(sys.executable, "-m", "venv", tmp_path, "--system-site-packages", "--without-pip")
     if sys.platform == "win32":
         env_exe = tmp_path / "Scripts" / "python.exe"
@@ -49,5 +48,6 @@ def test_build_package1(tmp_path):
             env={"PYMSBUILD_EXTENSION_COMMAND": "app=pymsbuild_app:build"},
         )
         run(env_exe, "verify.py", cwd=root)
-    finally:
+    except Exception:
         print(*root.rglob("*"), sep="\n")
+        raise

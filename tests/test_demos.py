@@ -1,11 +1,11 @@
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 
 
 ROOT = pathlib.Path(__file__).absolute().parent.parent
-sys.path.insert(0, str(ROOT))
 TESTDATA = ROOT / "tests" / "testdata"
 
 import packaging
@@ -32,7 +32,7 @@ def run(*cmd, cwd=None, env=None):
 
 
 def test_build_package1(tmp_path):
-    root = TESTDATA / "package1"
+    root = shutil.copytree(TESTDATA / "package1", tmp_path / "package1")
     run(sys.executable, "-m", "venv", tmp_path, "--system-site-packages", "--without-pip")
     if sys.platform == "win32":
         env_exe = tmp_path / "Scripts" / "python.exe"

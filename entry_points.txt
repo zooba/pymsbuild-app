@@ -1,0 +1,2 @@
+[pymsbuild.command]
+app=pymsbuild_app:build
